@@ -12,18 +12,6 @@ from Reviewer import Reviewer
 # What this program does.
 # - This program scrapes the following data from from site TripAdvisor.com and inserts them into mySql tables.
 #   - review  data 
-#   
-# - This is also a new hotel what is going on here, 'Distrikt Hotel' had about 95% of the reviews without reviewers, this is odd, investigate?
-# - get entire review text by using spynner, which I think preprocesses the pages, invoking the jsp and then returns the expanded results
-#
-# - create a process to distribute the work, by parsing the input file and creating N threads 
-# - Create log summary counts
-# - Use these count to confirm that new reviews are always on the first pages
-#
-# - current design does a total build each day if an issue redesign, to do partials 
-#   or run several in programs in parallel, dumping to flat file and later import to db
-# - Add code to suppress hash key errors
-#
 
 def ScrapeTripAdvisorHotelPages(onlyNewReviews):
     # this function will manipulate the url to navigate to the next page if it exists
@@ -32,11 +20,11 @@ def ScrapeTripAdvisorHotelPages(onlyNewReviews):
     # and then crawling to the individual hotel reviews page    
       
     startTime = time.time()  
-    inPath = "/home/bradley/hotelUrls.txt"  
+    inPath = "/home/yourName/hotelUrls.txt"  
     inFile = open(inPath, "r")     # read in the hotel url's text file and loop thru
     ts = time.time()
     timeStamp = datetime.fromtimestamp(ts).strftime('%Y-%m-%d_%H:%M:%S')
-    path = "/home/bradley/Documents/A_Research_Spring_2014/data/TripAdvisor.com_Reviews" + "_" + timeStamp
+    path = "/home/yourName/Documents/Research/data/TripAdvisor.com_Reviews" + "_" + timeStamp
     logFile = open(path,"w")  # open the log file
     conn, cursor = OpenDBConn()  
     reviewIDs = GetReviewIDs(conn, cursor)
@@ -88,6 +76,7 @@ def ScrapeTripAdvisorHotelPages(onlyNewReviews):
             soup = BeautifulSoup(htmltext,from_encoding="utf-8") 
             #print htmltext
             #print soup 
+            
             # extract the reviews
             res, runOnce, firstReviewID, hotelName = ScrapeTripAdvisorHotelPage(onlyNewReviews, soup, url, logFile, runOnce, firstReviewID, hotelName, conn, cursor, reviewIDs, reviewerIDs, today)
             if res == -1:
@@ -213,7 +202,6 @@ def ScrapeTripAdvisorHotelReview(soup, soupReviews, url, logFile, runOnce, first
         errMsg = 'Error testing if reviewID exists in db.\n'
         logFile.write(errMsg)
         print errMsg
-
 
     # get review text
     try:
